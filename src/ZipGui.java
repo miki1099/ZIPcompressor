@@ -149,28 +149,18 @@ public class ZipGui extends javax.swing.JFrame {
     }// </editor-fold>
 
     private void addFileActionPerformed(java.awt.event.ActionEvent evt) {
-        buf.addAll(FileManager.getFiles());
-        files = FileManager.addWithoutDuplicate(buf, files);
-        fileNames = FileManager.getFileNames(files);
-        listModel.clear();
-        listModel.addAll(fileNames);
-        buf.clear();
+        addFiles();
     }
 
     private void removeActionPerformed(java.awt.event.ActionEvent evt) {
-        int [] indexes = jList1.getSelectedIndices();
-        System.out.println(Arrays.toString(indexes));
-        for (int i = 0; i < indexes.length; i++){
-            files.remove(indexes[i]);
-            fileNames.remove(indexes[i]);
-        }
-        listModel.clear();
-        listModel.addAll(fileNames);
+        removeFiles();
+    }
+    
+    private void zipActionPerformed(java.awt.event.ActionEvent evt) {
+        ZipManager.getPathAndZipFiles(files);
     }
 
-    private void zipActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-    }
+
 
     /**
      * @param args the command line arguments
@@ -206,6 +196,27 @@ public class ZipGui extends javax.swing.JFrame {
             }
         });
     }
+
+    private void addFiles(){
+        buf.addAll(FileManager.getFiles());
+        files = FileManager.addWithoutDuplicate(buf, files);
+        fileNames = FileManager.getFileNames(files);
+        listModel.clear();
+        listModel.addAll(fileNames);
+        buf.clear();
+    }
+
+    private void removeFiles(){
+        int [] indexes = jList1.getSelectedIndices();
+        System.out.println(Arrays.toString(indexes));
+        for (int i = 0; i < indexes.length; i++){
+            files.remove(indexes[i]);
+            fileNames.remove(indexes[i]);
+        }
+        listModel.clear();
+        listModel.addAll(fileNames);
+    }
+
 
     // Variables declaration - do not modify
     private javax.swing.JButton jButton1;

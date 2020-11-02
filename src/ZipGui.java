@@ -7,6 +7,7 @@
 import javax.swing.*;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -153,10 +154,18 @@ public class ZipGui extends javax.swing.JFrame {
         fileNames = FileManager.getFileNames(files);
         listModel.clear();
         listModel.addAll(fileNames);
+        buf.clear();
     }
 
     private void removeActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        int [] indexes = jList1.getSelectedIndices();
+        System.out.println(Arrays.toString(indexes));
+        for (int i = 0; i < indexes.length; i++){
+            files.remove(indexes[i]);
+            fileNames.remove(indexes[i]);
+        }
+        listModel.clear();
+        listModel.addAll(fileNames);
     }
 
     private void zipActionPerformed(java.awt.event.ActionEvent evt) {

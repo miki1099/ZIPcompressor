@@ -4,6 +4,11 @@
  * and open the template in the editor.
  */
 
+import javax.swing.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author mikig
@@ -26,7 +31,6 @@ public class ZipGui extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">
     private void initComponents() {
 
-        jMenuItem3 = new javax.swing.JMenuItem();
         jScrollPane1 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList<>();
         jButton1 = new javax.swing.JButton();
@@ -37,24 +41,24 @@ public class ZipGui extends javax.swing.JFrame {
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
-
-        jMenuItem3.setText("jMenuItem3");
+        listModel = new DefaultListModel();
+        files = new ArrayList<>();
+        buf = new ArrayList<>();
+        fileNames = new ArrayList<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("ZIP compressor");
+        setIconImage(new javax.swing.ImageIcon(getClass().getResource("/photo/zip.png")).getImage());
 
-        jList1.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = {};
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
+        jList1.setModel(listModel);
+
         jScrollPane1.setViewportView(jList1);
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/photo/folder.png"))); // NOI18N
         jButton1.setText("Add file");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                addFileActionPerformed(evt);
             }
         });
 
@@ -62,7 +66,7 @@ public class ZipGui extends javax.swing.JFrame {
         jButton2.setText("Remove");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                removeActionPerformed(evt);
             }
         });
 
@@ -70,18 +74,18 @@ public class ZipGui extends javax.swing.JFrame {
         jButton3.setText("ZIP");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                zipActionPerformed(evt);
             }
         });
 
         jMenu1.setText("File");
 
-        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItem1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/photo/folder.png"))); // NOI18N
         jMenuItem1.setText("Add file");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                addFileActionPerformed(evt);
             }
         });
         jMenu1.add(jMenuItem1);
@@ -91,14 +95,19 @@ public class ZipGui extends javax.swing.JFrame {
         jMenuItem2.setText("Remove");
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem2ActionPerformed(evt);
+                removeActionPerformed(evt);
             }
         });
         jMenu1.add(jMenuItem2);
 
-        jMenuItem4.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        jMenuItem4.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItem4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/photo/zip.png"))); // NOI18N
         jMenuItem4.setText("ZIP");
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                zipActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem4);
 
         jMenuBar1.add(jMenu1);
@@ -138,23 +147,19 @@ public class ZipGui extends javax.swing.JFrame {
         pack();
     }// </editor-fold>
 
-    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void addFileActionPerformed(java.awt.event.ActionEvent evt) {
+        buf.addAll(FileManager.getFiles());
+        files = FileManager.addWithoutDuplicate(buf, files);
+        fileNames = FileManager.getFileNames(files);
+        listModel.clear();
+        listModel.addAll(fileNames);
+    }
+
+    private void removeActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
     }
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-    }
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-    }
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-    }
-
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void zipActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
     }
 
@@ -198,12 +203,17 @@ public class ZipGui extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JList<String> jList1;
+    private DefaultListModel listModel;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JScrollPane jScrollPane1;
+    private List<File> files;
+    private List<File> buf;
+    private List<String> fileNames;
+
+
     // End of variables declaration
 }

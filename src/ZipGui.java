@@ -5,7 +5,10 @@
  */
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,6 +40,7 @@ public class ZipGui extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -76,6 +80,14 @@ public class ZipGui extends javax.swing.JFrame {
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 zipActionPerformed(evt);
+            }
+        });
+
+        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/photo/book.png"))); // NOI18N
+        jButton4.setText("Open File");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openFileByOtherProgram(evt);
             }
         });
 
@@ -126,7 +138,8 @@ public class ZipGui extends javax.swing.JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
-                                        .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE))
+                                        .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
+                                        .addComponent(jButton4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE))
                                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -140,6 +153,7 @@ public class ZipGui extends javax.swing.JFrame {
                                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(46, 46, 46)
                                 .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap(82, Short.MAX_VALUE))
@@ -148,11 +162,20 @@ public class ZipGui extends javax.swing.JFrame {
         pack();
     }// </editor-fold>
 
+    private void openFileByOtherProgram(ActionEvent evt) {
+        try {
+            openFile();
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(new JDialog(), "Problem with IO.");
+        }
+    }
+
     private void addFileActionPerformed(java.awt.event.ActionEvent evt) {
         addFiles();
     }
 
     private void removeActionPerformed(java.awt.event.ActionEvent evt) {
+
         removeFiles();
     }
     
@@ -217,11 +240,24 @@ public class ZipGui extends javax.swing.JFrame {
         listModel.addAll(fileNames);
     }
 
+    private void openFile() throws IOException {
+        int index = jList1.getSelectedIndex();
+        File buf = files.get(index);
+        if(!Desktop.isDesktopSupported()){
+            JOptionPane.showMessageDialog(new JDialog(), "Can't open file");
+            return;
+        }
+
+        Desktop desktop = Desktop.getDesktop();
+        if(buf.exists()) desktop.open(buf);
+    }
+
 
     // Variables declaration - do not modify
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JList<String> jList1;
     private DefaultListModel listModel;
     private javax.swing.JMenu jMenu1;

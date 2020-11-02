@@ -7,6 +7,8 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -56,7 +58,19 @@ public class ZipGui extends javax.swing.JFrame {
         setIconImage(new javax.swing.ImageIcon(getClass().getResource("/photo/zip.png")).getImage());
 
         jList1.setModel(listModel);
-
+        jList1.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
+                JList list = (JList)evt.getSource();
+                if (evt.getClickCount() == 2) {
+                    // Double-click detected
+                    try {
+                        openFile();
+                    } catch (IOException e) {
+                        JOptionPane.showMessageDialog(new JDialog(), "Problem with IO.");
+                    }
+                }
+            }
+        });
         jScrollPane1.setViewportView(jList1);
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/photo/folder.png"))); // NOI18N

@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.zip.ZipFile;
 
 /**
  *
@@ -43,6 +44,7 @@ public class ZipGui extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -66,7 +68,7 @@ public class ZipGui extends javax.swing.JFrame {
                     try {
                         openFile();
                     } catch (IOException e) {
-                        JOptionPane.showMessageDialog(new JDialog(), "Problem with IO.");
+                        ioProblemDialog("Problem with IO.");
                     }
                 }
             }
@@ -101,7 +103,17 @@ public class ZipGui extends javax.swing.JFrame {
         jButton4.setText("Open File");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                openFileByOtherProgram(evt);
+                if(!jList1.isSelectionEmpty()){
+                    openFileByOtherProgram(evt);
+                }
+            }
+        });
+
+        jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/photo/unzip.png"))); // NOI18N
+        jButton5.setText("Unzip");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                unzipFile(evt);
             }
         });
 
@@ -153,7 +165,8 @@ public class ZipGui extends javax.swing.JFrame {
                                         .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
                                         .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
-                                        .addComponent(jButton4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE))
+                                        .addComponent(jButton4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
+                                        .addComponent(jButton5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE))
                                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -167,20 +180,41 @@ public class ZipGui extends javax.swing.JFrame {
                                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(46, 46, 46)
                                 .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap(82, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>
 
+
+    private void ioProblemDialog(String s) {
+        JOptionPane.showMessageDialog(new JDialog(), s);
+    }
+
+    private void unzipFile(ActionEvent evt) {
+        int index = jList1.getSelectedIndex();
+        if(index != -1){
+            try {
+                ZipManager.unZipFiles(files.get(index));
+            } catch (IOException e) {
+                ioProblemDialog("Problem with IO.");
+            }
+        }
+
+    }
+
+
     private void openFileByOtherProgram(ActionEvent evt) {
         try {
             openFile();
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(new JDialog(), "Problem with IO.");
+            ioProblemDialog("Problem with IO.");
         }
     }
 
@@ -245,10 +279,10 @@ public class ZipGui extends javax.swing.JFrame {
 
     private void removeFiles(){
         int [] indexes = jList1.getSelectedIndices();
-        System.out.println(Arrays.toString(indexes));
         for (int i = 0; i < indexes.length; i++){
-            files.remove(indexes[i]);
-            fileNames.remove(indexes[i]);
+            files.remove(indexes[i] - i);
+            fileNames.remove(indexes[i] - i);
+
         }
         listModel.clear();
         listModel.addAll(fileNames);
@@ -258,7 +292,7 @@ public class ZipGui extends javax.swing.JFrame {
         int index = jList1.getSelectedIndex();
         File buf = files.get(index);
         if(!Desktop.isDesktopSupported()){
-            JOptionPane.showMessageDialog(new JDialog(), "Can't open file");
+            ioProblemDialog("Can't open file");
             return;
         }
 
@@ -272,6 +306,7 @@ public class ZipGui extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JList<String> jList1;
     private DefaultListModel listModel;
     private javax.swing.JMenu jMenu1;

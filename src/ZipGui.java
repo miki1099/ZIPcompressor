@@ -54,6 +54,10 @@ public class ZipGui extends javax.swing.JFrame{
         buf = new ArrayList<>();
         fileNames = new ArrayList<>();
 
+        Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+        int x = (int) ((dimension.getWidth() - this.getWidth()) / 4);
+        int y = (int) ((dimension.getHeight() - this.getHeight()) / 4);
+        setLocation(x,y);
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("ZIP compressor");
         setIconImage(new javax.swing.ImageIcon(getClass().getResource("/photo/zip.png")).getImage());

@@ -6,15 +6,15 @@ import java.util.zip.ZipInputStream;
 public class ZipOpenManager extends Thread{
     public static final int BUFFER = 4096;
     JProgressBar progressBar;
-    private File file;
+    private final File file;
     private long bytes;
     private long bytesWrite;
 
     public ZipOpenManager(JProgressBar progressBar, File file){
         this.progressBar = progressBar;
         this.file = file;
-        bytes = 0l;
-        bytesWrite = 0l;
+        bytes = 0L;
+        bytesWrite = 0L;
     }
 
     @Override

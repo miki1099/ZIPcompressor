@@ -8,3 +8,6 @@
 /httpRequests/
 # production files
 out/*
+artifacts/*
+src/META-INF/*
+.idea/*

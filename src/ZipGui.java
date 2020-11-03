@@ -12,15 +12,13 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.zip.ZipFile;
 
 /**
  *
  * @author mikig
  */
-public class ZipGui extends javax.swing.JFrame {
+public class ZipGui extends javax.swing.JFrame{
 
     /**
      * Creates new form ZipGui
@@ -45,6 +43,7 @@ public class ZipGui extends javax.swing.JFrame {
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
+        jProgressBar1 = new javax.swing.JProgressBar(0,100);
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -58,7 +57,7 @@ public class ZipGui extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("ZIP compressor");
         setIconImage(new javax.swing.ImageIcon(getClass().getResource("/photo/zip.png")).getImage());
-
+        jProgressBar1.setStringPainted(true);
         jList1.setModel(listModel);
         jList1.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
@@ -159,14 +158,15 @@ public class ZipGui extends javax.swing.JFrame {
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
                                 .addGap(21, 21, 21)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 226, Integer.MAX_VALUE)
+                                .addGap(23, 23, 23)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
                                         .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
                                         .addComponent(jButton4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
-                                        .addComponent(jButton5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE))
+                                        .addComponent(jButton5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
+                                        .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -186,6 +186,8 @@ public class ZipGui extends javax.swing.JFrame {
                                 .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(70, 70, 70)
+                                .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap(82, Short.MAX_VALUE))
         );
 
@@ -194,19 +196,16 @@ public class ZipGui extends javax.swing.JFrame {
 
 
     private void ioProblemDialog(String s) {
+
         JOptionPane.showMessageDialog(new JDialog(), s);
     }
 
     private void unzipFile(ActionEvent evt) {
         int index = jList1.getSelectedIndex();
         if(index != -1){
-            try {
-                ZipManager.unZipFiles(files.get(index));
-            } catch (IOException e) {
-                ioProblemDialog("Problem with IO.");
-            }
+            Thread unZipper = new ZipOpenManager(jProgressBar1, files.get(index));
+            unZipper.start();
         }
-
     }
 
 
@@ -219,6 +218,7 @@ public class ZipGui extends javax.swing.JFrame {
     }
 
     private void addFileActionPerformed(java.awt.event.ActionEvent evt) {
+
         addFiles();
     }
 
@@ -228,7 +228,8 @@ public class ZipGui extends javax.swing.JFrame {
     }
     
     private void zipActionPerformed(java.awt.event.ActionEvent evt) {
-        ZipManager.getPathAndZipFiles(files);
+        Thread zipper = new ZipSaveManager(jProgressBar1, files);
+        zipper.start();
     }
 
 
@@ -261,11 +262,8 @@ public class ZipGui extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new ZipGui().setVisible(true);
-            }
-        });
+        new ZipGui().setVisible(true);
+
     }
 
     private void addFiles(){
@@ -290,16 +288,17 @@ public class ZipGui extends javax.swing.JFrame {
 
     private void openFile() throws IOException {
         int index = jList1.getSelectedIndex();
-        File buf = files.get(index);
-        if(!Desktop.isDesktopSupported()){
-            ioProblemDialog("Can't open file");
-            return;
+        if(index != -1) {
+            File buf = files.get(index);
+            if (!Desktop.isDesktopSupported()) {
+                ioProblemDialog("Can't open file");
+                return;
+            }
+
+            Desktop desktop = Desktop.getDesktop();
+            if (buf.exists()) desktop.open(buf);
         }
-
-        Desktop desktop = Desktop.getDesktop();
-        if(buf.exists()) desktop.open(buf);
     }
-
 
     // Variables declaration - do not modify
     private javax.swing.JButton jButton1;
@@ -315,6 +314,7 @@ public class ZipGui extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JScrollPane jScrollPane1;
+    private static javax.swing.JProgressBar jProgressBar1;
     private List<File> files;
     private List<File> buf;
     private List<String> fileNames;
